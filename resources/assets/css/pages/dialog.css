@@ -1,0 +1,129 @@
+
+ 
+
+main section { 
+    &.content{
+    	.flexbox();
+    	.flexbox.__same();
+		.flexbox.__center();	
+		
+
+		min-height: 60%;
+        >section{
+        	margin-top: 15px;
+        	max-width: 1100px;
+        	&.persons{
+				.wrapClass.white();
+				.marginClass(right);
+				padding:0;
+				max-width: 290px;
+				@media @smallSizeMedia{
+					.marginClass(right);
+					position:absolute; 
+					z-index:3; 
+					right:0%; 
+					height:40px;  
+					overflow:hidden;
+					&:hover{
+							.longShadowClass();
+							height:auto;  
+					}
+				}
+				.group{
+					&.chooser{
+						display: none;
+						cursor: pointer;
+						
+						@media @smallSizeMedia{
+							display: block;
+						}
+
+					}
+					&.recent{
+						h3{
+							&:before{content: "\f005";}
+			
+						}
+						// @media @smallSizeMedia{
+						// 			display: none;
+						// } 
+					}
+					&.groups{
+						h3:before{content: "\f0c0";}
+					}
+					&.users{
+						h3:before{content: "\f183";}
+					}										
+					h3{
+						.paddingClass();
+						.shortShadowClass();
+						padding-top: 15px;
+						padding-bottom: 15px;
+						background: @backgroundColor;
+						// @media @smallSizeMedia{
+						// 	display: none;
+						// }
+						&:before{
+							padding-right: 10px;
+							font-family:'FontAwesome';
+							font-size:1em;
+							
+							font-weight: normal;
+						}
+					}
+
+					ul{
+						margin: 15px 0;
+						li{
+							.paddingClass(left);
+							.paddingClass(right);	
+							.transitionClass('border-color');
+
+							padding-top:12px;
+							padding-bottom:12px;						
+							position: relative;
+							cursor: pointer;
+							border-left:3px solid transparent;
+							&:hover{
+								border-color:@yellowColor;
+							}
+							&.active{
+								background-color:@lightColor;
+								border-color:@greenColor;
+			
+							}
+							.heartbit{
+								right:20px;
+								top:50%;
+							}
+							img{
+								 object-fit:cover;
+			                     width:30px;
+			                     height:30px;
+			                     border-radius:30px; 
+			                     display: block;
+			                     float: left;
+			                     margin: -5px 15px 0 0;
+			                     opacity: 0.8;
+			                    @media @smallSizeMedia{
+									display: none;
+								} 
+							}
+						}
+
+					}
+				}
+        	}
+
+        	&.chat-box{
+        		.flexbox.__grow-2;
+
+        		.wrapClass.white();
+        		.chatOften();
+
+        		
+        	}
+
+        }
+    }
+}

@@ -1,0 +1,218 @@
+@import (less) "_vars.less";
+
+/* MEDIA QUERY */
+
+//@smallSizeMedia: ~"screen and (max-width: @{smallwidth})";
+//@mediumSizeMedia: ~"screen and (max-width: @{mediumWidth})";
+
+
+/* SHADOWS */
+
+
+.shadowClass(@type: ''){
+   & when (@type = ''){
+       box-shadow: 0 0 10px rgba(0,0,0,0.05);  
+  }
+
+  & when (@type = 'inset'){
+        box-shadow: inset 0 0 2px rgba(0,0,0,0.1); 	
+  }  
+  
+  & when (@type = 'long'){
+       box-shadow: 0 0 10px rgba(0,0,0,0.4);	
+  }  
+  
+}
+
+
+
+.radiusClass(){
+	border-radius: 3px;
+}
+
+/* MARGINs&PADDINGS */
+
+
+
+.paddingClass(@type: '', @ots:@space) {
+  transition:padding @defTransitionTime;
+ & when (@type = ''){
+     padding:@ots;
+	 @media @mediumSizeMedia{
+		padding:@ots/2;
+	 }     
+  }
+
+  & when not (@type = ''){
+     padding-@{type}:@ots;
+	 @media @mediumSizeMedia{
+		padding-@{type}:@ots/2;
+	 }    	
+  }
+
+}
+
+
+.marginClass(@type: '', @ots:@space) {
+ transition:marginClass @defTransitionTime; 
+ & when (@type = ''){
+     margin:@ots;
+	 @media @mediumSizeMedia{
+		margin:@ots/2;
+	 }     
+  }
+
+  & when not (@type = ''){
+     margin-@{type}:@ots;
+	 @media @mediumSizeMedia{
+		margin-@{type}:@ots/2;
+	 }    	
+  }
+
+}
+
+.marginBetweenClass(@type: x, @ots:@space/2){
+
+	 & when (@type = x){
+		>*{
+			margin-right:@ots;
+			&:last-child{
+				margin-right:0;
+			}
+		}
+	  }
+
+	 & when (@type = y){
+		>*{
+			margin-bottom:@ots;
+			&:last-child{
+				margin-bottom:0;
+			}
+		}    
+	  }
+}
+
+
+/* LINKS */
+.linkClass(){
+    a{ 
+	.hoverColor(@linkHoverColor);
+        color:@linkColor;
+        text-decoration: none;
+        color:inherit;
+     }
+
+     &.white{
+     	a{
+
+     	 }
+     }
+     &.nolink{
+     	a{
+			color:inherit;
+			text-decoration: none;
+
+			&:hover{
+				color:inherit!important;
+				text-decoration: none;			
+			}
+     	 }
+     }    
+     &.lightBlue{
+     	a{
+			color:lighten(@blueColor, 75%);
+			text-decoration: none;
+			:hover{
+
+
+			}
+     	 }
+     } 
+     &.green{
+     	a{
+			color:@greenColor;
+			text-decoration: none;
+			.hoverColor(darken(@greenColor, 15%););
+	
+     	 }
+     }           
+}
+
+
+
+.hoverButtonClass(@color, @textColor:''){
+		.transitionClass(background-color);
+		cursor: pointer;
+		
+		&:hover{
+			background: darken(@color, 10%);
+			
+			& when not (@textColor = ''){
+				color:@textColor;    
+			}
+
+		}
+		&:active{
+			transform: translateY(3%);	
+		}
+}
+
+.opacityClass(){
+	.transitionClass(opacity);
+	opacity:.8;
+	&:hover{
+		opacity: 1;
+	}
+}
+
+/* WRAPS */
+.wrapClass(){
+	&.blue{
+
+		
+	}
+}
+
+
+/* TRANSITION, ANiMATION */
+.hoverBackgroundColor(@color: inherit){
+	 transition: background-color 1s ease; 
+	 &:hover{
+          transition: background-color .5s ease; 
+          background-color: @color!important; 
+     }
+}
+
+.hoverColor(@color: inherit){
+	 transition: ~"color @{defTransitionTime} ease";
+	 &:hover{
+          
+          color: @color!important; 
+     }
+}
+
+.transitionClass(@type){
+	transition: ~"@{type} @{defTransitionTime} ease";
+
+}
+
+/* MAGIC */
+
+.makeItCenter(){
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
+}
+
+.makeItCenterX(){
+	  position: absolute;
+	  left: 50%;
+	  transform: translateX(-50%);
+}
+
+.makeItCenterY(){
+	  position: absolute;
+	  top: 50%;
+	  transform: translateY(-50%);
+}

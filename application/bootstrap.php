@@ -1,6 +1,6 @@
 <?php use Glavred\Core\Loader;
 
-define('GLAVRED_VERSION', "v0.1.1");
+define('GLAVRED_VERSION', "v0.1.2");
 
 if(defined('DEBUG_MODE')  && DEBUG_MODE == 1){
     echo "<hr>DEBUG MODE is ON<hr>";

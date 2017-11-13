@@ -12,6 +12,8 @@
             'method' => "GET", 
             'jsonOnly' => true, 
             'namespace' => "Some\Name\Space",
+
+           'host' => 'domain.zone',    
     ],
 */
 

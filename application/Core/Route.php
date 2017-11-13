@@ -34,6 +34,12 @@ class Route
                        }
 
                        if (preg_match(  '|^'.$url.'$|'  , $check, $matches)){ 
+                           if(!empty($config['host'])){
+                               if($config['host'] !== $request->server('host')){
+                                    continue;
+                               }
+                           }
+
                            return  [
                               'route' => $config,
                               'url' => $matches

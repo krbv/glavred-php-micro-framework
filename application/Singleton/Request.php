@@ -38,7 +38,9 @@ class Request extends AAASingletons
         }elseif($name == 'path'){$name = 'DOCUMENT_ROOT';
         }elseif($name == 'url'){$name = 'REQUEST_URI';
         }elseif($name == 'browser'){$name = 'HTTP_USER_AGENT';
-        }elseif($name == 'method'){$name = 'REQUEST_METHOD';}
+        }elseif($name == 'method'){$name = 'REQUEST_METHOD';
+        }elseif($name == 'host'){$name = 'HTTP_HOST';}
+        
         
         return empty($this->collection['server'][$name]) ? "" :
             $this->collection['server'][$name];

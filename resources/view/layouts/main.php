@@ -1,10 +1,10 @@
 <!DOCTYPE html>
    <html lang="ru-RU">
-        <?= self::join('kit/head') ?>
+        <?= self::join('component/head') ?>
 	<body> 
            <main>  
                 <?= self::page() ?> 
            </main>
 	</body>
-        <?= self::join('kit/footer') ?>
+        <?= self::join('component/footer') ?>
 </html>

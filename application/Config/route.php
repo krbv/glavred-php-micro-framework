@@ -4,7 +4,7 @@
     [
             'controller' => "Welcome",
             'get' =>true, // default false
-            'action' => 'store' // default index
+            'action' => 'store' // default action
             'access' => 'User',  // default 'Guest',
 			
             'path' => "/",
@@ -13,7 +13,7 @@
             'jsonOnly' => true, 
             'namespace' => "Some\Name\Space",
 
-           'host' => 'domain.zone',    
+           'host' => 'domain.zone', or array   ['doment1','domen2'] 
     ],
 */
 

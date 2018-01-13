@@ -1,10 +1,5 @@
 <?php namespace Glavred\Core;
 
-/*
-Класс-маршрутизатор для определения запрашиваемой страницы.
-> цепляет классы контроллеров
-> создает экземпляры контролеров страниц и вызывает действия этих контроллеров.
-*/
 
 use Glavred\Singleton\Request;
 use Glavred\Singleton\Config;
@@ -12,14 +7,7 @@ use Glavred\Core\Access\AccessController;
 
 class Route
 {     
-    
-        
-       /*
-       * [routemap]: if action is not set => index
-       * [routemap]: allow post data => post = true
-       * [routemap]: allow get data => get = true
-       * [routemap]: attr "folder" for path to model and controller 
-       */
+   
         private static function routeFinder($check , $request){
           
                  foreach(Config::link()->route() as $config){
@@ -33,10 +21,14 @@ class Route
                             continue;
                        }
 
-                       if (preg_match(  '|^'.$url.'$|'  , $check, $matches)){ 
+                       if (preg_match(  '%^'.$url.'$%'  , $check, $matches)){ 
                            if(!empty($config['host'])){
-                               if($config['host'] !== $request->server('host')){
-                                    continue;
+                               if(is_array($config['host'])){
+                                   if(!in_array($request->server('host'), $config['host'])){
+                                        continue;
+                                   }
+                               }elseif($config['host'] !== $request->server('host')){
+                                        continue;
                                }
                            }
 
@@ -62,11 +54,12 @@ class Route
             
             //проверяем есть ли URL В URLMAP
             if(!$config = self::routeFinder($urlToArray["path"], $request)) {    
-                  Route::goto404('routeMapChecker cant find the way');
+                  Route::notFound('routeMapChecker cant find the way');
+                  return false;
              }
              
             //запоминаем текущий url
-            $request->url = $config["url"];            
+            $request->path = $request->url = $config["url"];              
 
              //check user type and rights
              $accessLevel = empty($config['route']['access']) ? 'Guest' 
@@ -75,13 +68,17 @@ class Route
 
              
              //если есть гет параметры но они не разрешены -> goto 4
-             if(!empty($get) && ($config['route']["get"]!==true)) {Route::goto404(); }
+             if(!empty($get) && ($config['route']["get"]!==true)) {
+                 Route::notFound();
+                  return false;
+             }
                          
              //if JsonOnly
              if(!empty($config['route']["jsonOnly"]) && $config['route']["jsonOnly"] == true){
                  //print_r($request->server['']);
                  if(strpos($request->server('HTTP_ACCEPT'), 'application/json') === false){
                       self::methodNotAllowed();
+                      return false;
                  }
 
              }
@@ -90,7 +87,7 @@ class Route
              $controllerName = $config['route']['controller'].'Controller';
              $actionName = 
                         empty($config['route']['action']) 
-                        ? 'index' 
+                        ? 'action' 
                         : $config['route']['action'];
              
 
@@ -112,39 +109,63 @@ class Route
              
 	}
         
-        
+        /* ERRORS */
 
-	static function goto404(){            
-            if(DEBUG_MODE == true){
-                die('goto404');
+	static public function notFound(){
+            if(!self::constructErrorClass(__FUNCTION__)){
+                header("HTTP/1.1 404 Not Found"); 
+                header("Status: 404 Not Found"); 
+                return false; 
             }
-            
-            header("HTTP/1.1 404 Not Found"); 
-            header("Status: 404 Not Found"); 
-	    //header('Location: /404');
-            exit;
-       
-         }
+        }
 
-	static function methodNotAllowed(){            
-            header("HTTP/1.0 405 Method Not Allowed"); 
-            exit();
-       
+	static public function methodNotAllowed(){
+            if(!self::constructErrorClass(__FUNCTION__)){
+                header("HTTP/1.0 405 Method Not Allowed"); 
+                return false; 
+            }       
+        } 
+         
+        static public function serverError($text = ''){  
+             if(!self::constructErrorClass(__FUNCTION__, $text)){
+                header('X-Error-Message: '.$text, true, 500);
+                return false; 
+            }
          } 
          
- 	static function serverError($text = ''){ 
-            header('X-Error-Message: '.$text, true, 500);
-            die($text);
-         } 
+	static public function accessDenied(){   
+            if(!self::constructErrorClass(__FUNCTION__)){
+                header("HTTP/1.1 401 Unauthorized"); 
+                return false;
+            }           
+        }     
          
-	static function AccessDenied(){            
-            die('AccessDenied');
-         }              
-        
-        
+        /* END_ERRORS */  
+         
+      
     	static function redirect($url, $code=302){
             header( "Location: $url", true, $code );
             exit;
-        }        
+        }    
+        
+        
+  
+        
+        static private function constructErrorClass(string $type, $tdata = ''){
+            $data = Config::link()->error($type);
+            if(!empty($data['class']) && !empty($data['action'])){
+                    $class = new $data['class']();    
+                    if(method_exists($class, $data['action'])){
+                       $class->{$data['action']}($tdata);
+                       return true;
+                    }else{
+                        throw new \LoaderException("{$data['class']}"
+                        . " method {$data['action']} not found");
+                    }    
+            }        
+        }      
+        
+        
+        
         
 }

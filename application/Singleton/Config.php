@@ -14,7 +14,6 @@ class Config extends AAASingletons
         
         $foundData = [];   
 
-        
         foreach($arguments as $one){
             $bits = explode('/', $one);
             $foundData[$one] = $this->getSettings($name);
@@ -47,17 +46,28 @@ class Config extends AAASingletons
 
     }
 
+    public function prependSettings($pathOrArray, $name){
+        $data = is_array($pathOrArray) 
+                ? $pathOrArray 
+                : $this->getSettingsFromFile($pathOrArray, true);
+        $this->settings[$name] = array_merge($data, $this->getSettings($name));
+    }
     
-    public function mergeSettings($path, $name){
- 
-        $data = $this->getSettingsFromFile($path, true);
+    public function appendSettings($pathOrArray, $name){
+        $data = is_array($pathOrArray) 
+                ? $pathOrArray 
+                : $this->getSettingsFromFile($pathOrArray, true);
         $this->settings[$name] = array_merge($this->getSettings($name), $data);
     }
     
-    
-    
-    
-    
+    public function mergeSettings($pathOrArray, $name){
+        $data = is_array($pathOrArray) 
+                ? $pathOrArray 
+                : $this->getSettingsFromFile($pathOrArray, true);
+       
+        $this->settings[$name] = array_replace_recursive($this->getSettings($name), $data);    
+    }
+        
     private function getSettings($name){
 
         if(!isset($this->settings[$name])){
@@ -74,7 +84,7 @@ class Config extends AAASingletons
 
 
         if(!file_exists($path)){
-            return new \ConfigException("$path is not found");
+            return [];
         } return include $path;
         
           

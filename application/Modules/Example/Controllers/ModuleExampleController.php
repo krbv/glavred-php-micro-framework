@@ -4,7 +4,7 @@ use Glavred\Core\View;
 
 class ModuleExampleController 
 {  
-        public function index($request){               
+        public function action($request){               
             return View::renderHTML( "MODULE EXAMPLE");
 	}  
 } 

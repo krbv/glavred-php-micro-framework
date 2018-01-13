@@ -7,8 +7,7 @@ class MyExceptions extends \Exception{
         @ob_end_clean(); // во view есть буферизация, закрываем если возникла ошибка
         $this->logging($message);
         parent::__construct($message);
-        $this->showError();
-        //$this->gotoface();
+        Glavred\Core\Route::serverError();
         die();
     }  
     
@@ -37,17 +36,6 @@ class MyExceptions extends \Exception{
             //send email
         }
     } 
-    
-    public function showError(){
-        echo "Something went wrong";
-    }
-    
-    
-    public function gotoface(){
-        if($_SERVER['REQUEST_URI'] != '/'){
-            Route::ErrorPage404();
-        }
-    }  
 
 }
 
@@ -124,4 +112,9 @@ class DatabaseException extends MyExceptions {
     } 
 }
 
-
+class ModulesException extends MyExceptions {
+    public function __construct($message=null) {
+        parent::__construct($message);
+    }
+    
+}

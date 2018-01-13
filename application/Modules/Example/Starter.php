@@ -10,7 +10,7 @@ class Starter implements StarterInterface
 
   
         $currentFolder = realpath(dirname(__FILE__));
-        Config::link()->mergeSettings($currentFolder.'/Config/route.php' , 'route');
+        Config::link()->appendSettings($currentFolder.'/Config/route.php' , 'route');
         
     }
 

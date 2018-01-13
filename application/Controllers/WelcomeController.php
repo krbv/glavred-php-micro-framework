@@ -8,7 +8,7 @@ class WelcomeController
          * $request->url - has current url path
          * 
          */
-        public function index($request){   
+        public function action($request){   
            
             View::$data = [
                 'date'    => date('d.m.Y H:i'),

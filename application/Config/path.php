@@ -1,11 +1,11 @@
 <?php  
 
 return [
-    
+
     'view' => [
         'public' => PUBLIC_DIR,
         'base' => ROOT_DIR.'/resources/view/',
-        'template' => ROOT_DIR.'/resources/view/template/',
+        'template' => ROOT_DIR.'/resources/view/layouts/',
         'page' => ROOT_DIR.'/resources/view/page/',
         'css' => [
             'source' => ROOT_DIR.'/resources/assets/css/',

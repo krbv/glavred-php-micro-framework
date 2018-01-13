@@ -72,7 +72,7 @@ class Database {
      public function first($key = null){
         $this->filter['limit'] = 1;
         $data = $this->get();
-        if(!empty($data)){return false;}
+        if(empty($data)){return false;}
         return ($key) ? $data[0]->$key : $data[0];
     }
     
@@ -186,7 +186,7 @@ class Database {
 /* QUERY BILDS */
 
     private function build_select_query(){
-        
+       
         $queryStr = 'SELECT';
         $filter = $this->filter;
         $ssValue = [];
@@ -245,11 +245,10 @@ class Database {
         if(!empty($this->filter['where'])){
             $queryStr .= " WHERE";
             foreach($this->filter['where'] as $where){
-                $queryStr .= " `{$where['name']}` {$where['type']} ? {$where['bridge']}";
+                $queryStr .= " {$where['bridge']} `{$where['name']}` {$where['type']} ? ";
                 $ssValue[] =  $where['value'];
-                $lastBride = $where['bridge'];
             }
-            $queryStr = substr($queryStr, 0, -1*strlen($lastBride));
+            $queryStr = str_replace(['WHERE AND', 'WHERE OR'], 'WHERE', $queryStr);
         }
     }
     

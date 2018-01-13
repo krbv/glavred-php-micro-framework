@@ -46,8 +46,8 @@ class Request extends AAASingletons
             $this->collection['server'][$name];
     }
     
-    public function input($name) {
-        
+    public function input($name = NULL) {
+
          if(!isset($name)){ return $this->collection['all'];}
         
          return empty($this->collection['all'][$name]) ? "" :
@@ -70,9 +70,21 @@ class Request extends AAASingletons
         }else{
             if(!empty($type)){
                 return $this->files[$name][$type];
-            }else{
-                return $this->files[$name];
-            }            
+            }
+               
+            if(!is_array($this->files[$name]['name'])){
+                    return $this->files[$name];
+            }
+
+            //inpName multiple
+            $output = [];
+            foreach($this->files[$name] as $key => $values){
+                  for($i=0;$i<count($values);$i++){
+                      $output[$i][$key] = $values[$i];
+                  }
+            }
+            return $output ?? null;
+                   
         }
     }
     

@@ -3,7 +3,10 @@
 return [
    
     /* Какие использовать шрифты */
-    'fonts' => ['fontawesome'],
+    'font' => [
+        'copy' => ['fontawesome'],
+        'gzip' => true,
+    ],
  
     'html' => [
         'compress' => false,

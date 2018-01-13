@@ -1,18 +1,5 @@
 <?php namespace Glavred\Core;
 
-
-/*
- * СТРУКТУРА
- * html['title']
- * html['description']
- * css[] - array
- * js[] - array
- * data
-
- *  */
-//use Glavred\Helpers\Network;
-//use Glavred\Helpers\Password;
-//use Glavred\Helpers\Files;
 use Glavred\Singleton\Config;
 use Less_Parser;
 use ViewsException;
@@ -22,6 +9,7 @@ class View
 {
        static public $data = [];
        static private $page;
+       static private $pageContent;
        static private $configSettings;
 
        /* TYPES OF VIEWS */
@@ -32,11 +20,14 @@ class View
            $config = Config::link();
            if($template){
                 $path = $config->path('view/template')."$template.php";
+                $pagePath = $config->path('view/page')."$page.php";
+                self::$pageContent =  self::cache($pagePath, $compress);
            }else{
                $path = $config->path('view/page')."$page.php";
            }
            echo self::cache($path, $compress);
-       }           
+         }           
+       
        
        static public function renderCSS($text){
            header("HTTP/1.1 200 OK");
@@ -64,12 +55,22 @@ class View
        
 /* END */ 
        
+       static public function setHeader($headers){
+
+           foreach((array) $headers as $message){
+                header($message);
+           }
+       }
        
        
        static public function assembleCSS(...$names) : string
        {
-           $paths = self::checkMakePaths($names, 'css');
+           if(is_array($names[0])){
+               $names = $names[0];
+           }
 
+           $paths = self::checkMakePaths($names, 'css');
+           
            $content = '';
            $less = new Less_Parser();
            foreach($paths as $path){
@@ -93,6 +94,9 @@ class View
        static public function assembleJS(...$names) : string
        {
            
+           if(is_array($names[0])){
+               $names = $names[0];
+           }
            $paths = self::checkMakePaths($names, 'js');
            
            $jsText = Files::getFileContent($paths);
@@ -138,16 +142,15 @@ class View
        
        static private function copyFonts():int
        {
-
+         
            $moved = 0;
            $sourceFolder = self::$configSettings->path("view/font/source");
            $destinationFolder = self::$configSettings->path("view/font/cache");
            if(!is_dir($sourceFolder) || !is_dir($destinationFolder)){
                throw new ViewsException("Can't copy fonts dirs are no exists");
            }
-           
-            $fonts = self::$configSettings->view("fonts");
-            
+             
+            $fonts = self::$configSettings->view("font/copy");
             foreach($fonts as $font){
                 $copied = $destinationFolder.$font;
                 if(is_dir($copied)){ continue; }
@@ -156,6 +159,9 @@ class View
                     throw new ViewsException("Folder $source doesnt exist");
                 }
                 Files::copyFolder($source, $copied);
+                if(self::$configSettings->view("font/gzip")){
+                    Files::gzCompressor(glob("$copied/*.*"));
+                }
                 $moved++;
             }
            
@@ -204,7 +210,7 @@ class View
        
        
        static public function page(){
-           return self::render(self::$page); 
+           return self::$pageContent; 
        }
        
        
@@ -222,7 +228,7 @@ class View
 
                   $code = preg_replace('/[\s]{2,}/', ' ', $code); 
                   $code = str_replace(['class=""'], "", $code);
-                  $code = str_replace(["\r\n","\t"], "", $code);
+                  $code = str_replace(["\r\n","\t","\n"], "", $code);
                   
                   $code = str_replace('" >', '">', $code);
                   $code = str_replace('> <', "><", $code);
@@ -232,14 +238,13 @@ class View
         }
         
        static public function jsCompress(string $code){
-           
+        
            $answer = Network::curl('https://closure-compiler.appspot.com/compile', [
                                           'compilation_level' => 'SIMPLE_OPTIMIZATIONS',
                                           'output_format' => 'text',
                                           'output_info' => 'compiled_code',
                                           'js_code' => $code,
-                                    ],[],true);
-           
+                                    ],[]);
            if($answer['code'] == 200 && !empty($answer['output'])){
                return $answer['output'];
            }else{
